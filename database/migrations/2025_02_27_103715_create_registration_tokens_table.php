@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('registration_tokens', function (Blueprint $table) {
             $table->id();
             $table->string('token')->unique();
-            $table->timestamp('created_at')->nullable();
+            $table->timestamp('created_at')->useCurrent();
             $table->timestamp('expires_at')->nullable();
         });
     }

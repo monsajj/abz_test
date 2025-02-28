@@ -20,6 +20,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'position_id',
+        'photo',
         'password',
     ];
 
@@ -42,4 +45,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public $timestamps = false;
+
+    public function getRegistrationTimestampAttribute()
+    {
+        // Return the registration_timestamp as a Unix timestamp
+        return strtotime($this->attributes['registration_timestamp']);
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
+    }
 }

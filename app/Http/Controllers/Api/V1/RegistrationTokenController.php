@@ -13,6 +13,8 @@ class RegistrationTokenController extends Controller
     {
         // Create token and check for uniqueness
         do {
+            // We can create here token any way we want or need. We can use Hash and link it to user email or phone,
+            // but I'm not sure we really needed it here in such assignment
             $token = Str::random(60);
         } while (RegistrationToken::where('token', $token)->exists());
 

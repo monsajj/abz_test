@@ -135,8 +135,7 @@ class UserController extends Controller
 
         // Here we can delete the used token from the database if needed (for example, to avoid increasing their number)
         // $registrationToken->delete();
-        //ToDo uncomment token update
-//        $registrationToken->update(['expires_at' => now()]);
+        $registrationToken->update(['expires_at' => now()]);
 
         return response()->json([
             'success' => true,

@@ -12,8 +12,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-//        $this->call(PositionSeeder::class);
-//        \App\Models\User::factory(45)->create();
+        $this->call(PositionSeeder::class);
+        \App\Models\User::factory(45)->create();
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',

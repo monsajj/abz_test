@@ -29,8 +29,7 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'phone' => $this->generatePhoneNumber(),
             'position_id' => Position::inRandomOrder()->first()->id,
-            //ToDo update photo for Factory
-            'photo' => 'photo.jpg',
+            'photo' => 'optimized_photos/67c30fc02b285.jpg',
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),

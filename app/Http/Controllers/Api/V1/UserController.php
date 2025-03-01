@@ -123,24 +123,7 @@ class UserController extends Controller
             ], 409);
         }
 
-        $imageFile = $request->file('photo');
-        $filename = uniqid() . '.' . $imageFile->getClientOriginalExtension();
-
-
-        $imageFile->storeAs('original_photos', $filename, 's3');
-
-        $photoPath = $this->processImage($imageFile, $filename);
-
-        Log::info($photoPath);
-
-        //add another return to test image saving backend part without creating a user
-        //ToDo delete this return and uncomment token expiration
-        return response()->json([
-            'success' => true,
-            'user_id' => 'time 0',
-            'message' => 'New user successfully registered',
-        ], 201);
-
+        $photoPath = $this->processImage($request->file('photo'));
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -152,6 +135,7 @@ class UserController extends Controller
 
         // Here we can delete the used token from the database if needed (for example, to avoid increasing their number)
         // $registrationToken->delete();
+        //ToDo uncomment token update
 //        $registrationToken->update(['expires_at' => now()]);
 
         return response()->json([
@@ -161,49 +145,48 @@ class UserController extends Controller
         ], 201);
     }
 
-    protected function processImage($imageFile, $filename)
+    protected function processImage($imageFile)
     {
+        $filename = uniqid() . '.' . $imageFile->getClientOriginalExtension();
         $image = Image::make($imageFile->getRealPath());
         $image->fit(70, 70);
 
-        $croppedPath = public_path($filename);
-        $image->save($croppedPath);
+        $temporaryPath = public_path($filename);
+        $image->save($temporaryPath);
 
         $s3Path = 'cropped_photos/' . $filename;
-        $test = Storage::disk('s3')->put($s3Path, file_get_contents($croppedPath), 's3');
-        $croppedFileUrl = Storage::disk('s3')->url($s3Path);
+        Storage::disk('s3')->put($s3Path, file_get_contents($temporaryPath), 's3');
+        @unlink($temporaryPath);
 
-        Log::info($test);
-        Log::info($croppedFileUrl);
+        $optimizedImageUrl = $this->optimizeImageWithTinyPng($s3Path);
+        if ($optimizedImageUrl['success'] === true)
+            return $optimizedImageUrl['optimized_image_path'];
         return $s3Path;
-
-        $optimizedImagePath = $this->optimizeImageWithTinyPng($croppedPath, $filename);
-
-        return $optimizedImagePath;
     }
 
-    protected function optimizeImageWithTinyPng($imagePath, $filename)
+    protected function optimizeImageWithTinyPng($croppedImagePath)
     {
-        Log::info($imagePath);
-        Log::info($filename);
-        $apiKey = config('services.tiny_png.api_key');
-        $url = config('services.tiny_png.api_url');
-
-        $response = Http::withBasicAuth('api', $apiKey)
-            ->attach('file', fopen($imagePath, 'r'))
-            ->post($url);
-
-        if ($response->successful()) {
-            $optimizedUrl = $response->json()['output']['url'];
-
-            $optimizedImage = file_get_contents($optimizedUrl);
-            $optimizedImagePath = 'optimized_photos/' . $filename;
-
-            file_put_contents($optimizedImagePath, $optimizedImage);
-
-            return $optimizedImagePath;
-        } else {
-            throw new \Exception('Image optimization failed: ' . $response->body());
+        $s3Path = 'optimized_photos/' . basename($croppedImagePath);
+        try {
+            \Tinify\setKey(config('services.tiny_png.api_key'));
+            // Get optimized file from cropped image on s3 server
+            $source = \Tinify\fromUrl(Storage::disk('s3')->url($croppedImagePath));
+            // Save optimized file to s3
+            Storage::disk('s3')->put($s3Path, $source->toBuffer(), 's3');
+            // Delete old (cropped) image
+            if (Storage::disk('s3')->exists($croppedImagePath)) {
+                Storage::disk('s3')->delete($croppedImagePath);
+            }
+            return [
+                'success' => true,
+                'optimized_image_path' => $s3Path,
+            ];
+        } catch (\Exception $e) {
+            Log::info('Error optimizing image: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Error optimizing image: ' . $e->getMessage(),
+            ];
         }
     }
 }

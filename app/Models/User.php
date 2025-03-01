@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -52,6 +53,11 @@ class User extends Authenticatable
     {
         // Return the registration_timestamp as a Unix timestamp
         return strtotime($this->attributes['registration_timestamp']);
+    }
+
+    public function getPhotoAttribute()
+    {
+        return $this->attributes['photo'] ? Storage::disk('s3')->url($this->attributes['photo']) : null;
     }
 
     public function position()

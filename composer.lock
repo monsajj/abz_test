@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d29c7dec1b31ce1dfca2a5179c954f77",
+    "content-hash": "31ccfec352fb2b8ce05ba8cc0927386d",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5749,6 +5749,66 @@
                 "source": "https://github.com/tijsverkoyen/CssToInlineStyles/tree/v2.3.0"
             },
             "time": "2024-12-21T16:25:41+00:00"
+        },
+        {
+            "name": "tinify/tinify",
+            "version": "1.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tinify/tinify-php.git",
+                "reference": "8386ac9b5d4068640ad9756a897ccd162597b8c1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tinify/tinify-php/zipball/8386ac9b5d4068640ad9756a897ccd162597b8c1",
+                "reference": "8386ac9b5d4068640ad9756a897ccd162597b8c1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "lib-curl": ">=7.20.0",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8 || ^5.7 || ^6.5 || ^7.5 || ^8.4 || ^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/Tinify.php",
+                    "lib/Tinify/Exception.php"
+                ],
+                "psr-4": {
+                    "Tinify\\": "lib/Tinify/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rolf Timmermans",
+                    "email": "rolftimmermans@voormedia.com"
+                }
+            ],
+            "description": "PHP client for the Tinify API. Tinify compresses your images intelligently. Read more at https://tinify.com.",
+            "homepage": "https://tinify.com/developers",
+            "keywords": [
+                "api",
+                "compress",
+                "images",
+                "tinify",
+                "tinyjpg",
+                "tinypng"
+            ],
+            "support": {
+                "email": "support@tinify.com",
+                "issues": "https://github.com/tinify/tinify-php/issues",
+                "source": "https://github.com/tinify/tinify-php/tree/1.6.2"
+            },
+            "time": "2025-01-27T15:41:06+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

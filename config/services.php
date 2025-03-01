@@ -33,6 +33,5 @@ return [
 
     'tiny_png' => [
         'api_key' => env('TINY_PNG_API_KEY', ''),
-        'api_url' => 'https://api.tinify.com/shrink',
     ]
 ];

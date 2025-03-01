@@ -9,6 +9,7 @@ use App\Models\Position;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\UserResource;
 use Intervention\Image\Facades\Image;
@@ -125,6 +126,9 @@ class UserController extends Controller
         $imageFile = $request->file('photo');
         $filename = uniqid() . '.' . $imageFile->getClientOriginalExtension();
 
+
+        $imageFile->storeAs('original_photos', $filename, 's3');
+
         $photoPath = $this->processImage($imageFile, $filename);
 
         Log::info($photoPath);
@@ -161,9 +165,17 @@ class UserController extends Controller
     {
         $image = Image::make($imageFile->getRealPath());
         $image->fit(70, 70);
-        $croppedPath = public_path('storage/cropped_photos/' . $filename);
+
+        $croppedPath = public_path($filename);
         $image->save($croppedPath);
 
+        $s3Path = 'cropped_photos/' . $filename;
+        $test = Storage::disk('s3')->put($s3Path, file_get_contents($croppedPath), 's3');
+        $croppedFileUrl = Storage::disk('s3')->url($s3Path);
+
+        Log::info($test);
+        Log::info($croppedFileUrl);
+        return $s3Path;
 
         $optimizedImagePath = $this->optimizeImageWithTinyPng($croppedPath, $filename);
 

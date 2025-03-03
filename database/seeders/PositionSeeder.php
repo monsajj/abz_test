@@ -14,12 +14,10 @@ class PositionSeeder extends Seeder
     public function run(): void
     {
         $positions = [
-            ['name' => 'HR'],
-            ['name' => 'Manager'],
-            ['name' => 'Developer'],
+            ['name' => 'Lawyer'],
+            ['name' => 'Content manager'],
+            ['name' => 'Security'],
             ['name' => 'Designer'],
-            ['name' => 'QA Tester'],
-            ['name' => 'Product Owner'],
         ];
 
         // Insert the sample data into the positions table

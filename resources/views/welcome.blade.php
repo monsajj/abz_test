@@ -24,6 +24,16 @@
             height: 70px;
             object-fit: cover;
         }
+        form {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -56,13 +66,32 @@
 
     <h2>Add New User</h2>
     <form id="userForm">
-        <input type="text" id="name" placeholder="Name">
-        <input type="text" id="email" placeholder="Email">
-        <input type="text" id="phone" placeholder="Phone (+380)">
-        <input type="text" id="position_id" placeholder="Position ID">
-        <input type="file" id="photo" accept="image/jpeg,image/png">
-        <input type="text" id="token" value="" placeholder="Token">
-        <button type="submit">Add User</button>
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Name">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="text" id="email" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone (+380):</label>
+            <input type="text" id="phone" placeholder="Enter phone number">
+        </div>
+        <div class="form-group">
+            <label for="position_id">Position:</label>
+            <select id="position_id"></select>
+        </div>
+        <div class="form-group">
+            <label for="photo">Photo:</label>
+            <input type="file" id="photo" accept="image/jpeg,image/png">
+        </div>
+        <div class="form-group">
+            <input type="text" id="token" value="" placeholder="Token">
+        </div>
+        <div class="form-group">
+            <button type="submit">Add User</button>
+        </div>
     </form>
 
     <h2>Get User by ID</h2>
@@ -219,6 +248,15 @@
                             const listItem = document.createElement('li');
                             listItem.textContent = `ID: ${position.id}, Name: ${position.name}`;
                             positionsList.appendChild(listItem);
+                        });
+
+                        const positionSelect = document.getElementById('position_id');
+                        positionSelect.innerHTML = '';
+                        data.positions.forEach(position => {
+                            const option = document.createElement('option');
+                            option.value = position.id;
+                            option.textContent = position.name;
+                            positionSelect.appendChild(option);
                         });
                     } else {
                         alert('Failed to load positions: ' + data.message);
